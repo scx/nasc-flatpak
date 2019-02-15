@@ -1,0 +1,54 @@
+name: nasc
+#buildsystem: cmake-ninja
+buildsystem: meson
+builddir: true
+sources:
+  - type: archive
+    url: https://github.com/parnold-x/nasc/archive/0.5.1.tar.gz
+    sha256: 96304085f6082b14d9220c28d7823bcb59317b567f9bcfe09ab905e27f053859
+  # Application patches
+  # Use get_user_data_dir() instead of hardcoded path
+  - type: patch
+    path: nasc-0.5.1-sheet_path.patch
+  # Enhance desktop file: update Categories, change GenericName, add StartupWMClass and StartupNotify
+  - type: patch
+    path: nasc-0.5.1-desktop.patch
+  # Enhance AppData file: fix release notes, add screenshot captions and kudos
+  - type: patch
+    path: nasc-0.5.1-appdata.patch
+  # CMake patches
+  # PATCH-FIX-UPSTREAM link.patch -- Build app with 'Wl,--no-undefined' and static library
+  # https://build.opensuse.org/package/view_file/openSUSE:Factory/nasc/nasc-0.5.0-link.patch?expand=1
+  - type: patch
+    path: nasc-0.5.1-link.patch
+  # The --thread option is now deprecated
+  # Should be ignored, but actually it leads to a build failure
+  # https://github.com/GNOME/vala/blob/f7c386eae4a1ab15eb4a21dce540e6298d93436c/compiler/valacompiler.vala#L131
+  # Fixes builds on FC >= 28 and EL >= 8
+  - type: patch
+    path: nasc-0.5.1-vala-thread.patch
+  # Reorganize CMake spec
+  # Move com.github.parnold-x.nasc.gschema.xml to data subdirectory
+  # Rename src/config.vala.cmake to src/config.vala.in 
+  - type: patch
+    path: nasc-0.5.1-cmake.patch
+  # Meson patches
+  # Based on: Port to Meson
+  # https://github.com/parnold-x/nasc/pull/98
+  # Add cln dependency to libqalculatenasc
+  # Fixes builds on FC < 28 and EL < 8  
+  - type: patch
+    path: nasc-0.5.1-meson-optional.patch
+  # Change Application ID
+  # https://github.com/parnold-x/nasc/issues/101
+  # https://github.com/parnold-x/nasc/issues/67
+  # https://github.com/elementary/houston/issues/566
+  # sed_exp='s!com\.github\.parnold-x\.nasc!com.github.parnold_x.nasc!g'; find * -xtype f \( -name '*.vala' -o -name 'com.github.parnold-x.nasc.*' -o -name 'CMakeLists.txt' -o -name 'meson.build' \) | xargs -I{} sed -i -re "${sed_exp}" '{}'; find * -xtype f -name 'com.github.parnold-x.nasc.*' | while read -r file; do d="$( dirname "${file}" )"; f="$( basename "${file}" )"; g="$( sed -re "${sed_exp}" <<< "${f}" )"; mv "${d}/${f}" "${d}/${g}"; done; desktop-file-edit --set-key='X-Flatpak-RenamedFrom' --set-value='nasc.desktop;com.github.parnold-x.nasc.desktop;' data/*.desktop;   
+  - type: patch
+    path: nasc-0.5.1-change-id.patch
+post-install:
+  - ln -s "${FLATPAK_ID}" "${FLATPAK_DEST}/bin/nasc";
+  - install -p -D -m 0644 "../COPYING" -t "${FLATPAK_DEST}/share/licenses/nasc/";
+modules:
+  - gtksourceview.yaml
+  - libqalculate.yaml

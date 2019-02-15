@@ -1,0 +1,60 @@
+diff -Naur nasc-0.5.1.orig/src/Controller.vala nasc-0.5.1/src/Controller.vala
+--- nasc-0.5.1.orig/src/Controller.vala	2018-11-05 19:38:55.000000000 +0100
++++ nasc-0.5.1/src/Controller.vala	2019-02-09 13:14:40.889918302 +0100
+@@ -45,8 +45,10 @@
+     public NascSheet actual_sheet { get; private set; }
+     private Gee.LinkedList<NascSheet> removal_list;
+ 
+-    private string sheet_path = Environment.get_home_dir ()
+-                                + NascSettings.sheet_path + "nasc.sheets";
++    private string sheet_base = Path.build_filename (
++                                Environment.get_user_data_dir(),
++                                NascSettings.sheet_dir);
++    private string sheet_path;
+ 
+     private string _sheets;
+     public string sheets_file {
+@@ -93,6 +95,7 @@
+     public signal void periodic ();
+ 
+     public Controller (InputView input, ResultView results) {
++        this.sheet_path = Path.build_filename (this.sheet_base, "nasc.sheets");
+         this.enable_calc = input.operators;
+         this.removal_list = new Gee.LinkedList<NascSheet> ();
+         /* add " to " to enable_calc list to allow variable to other unit conversion */
+@@ -142,8 +145,7 @@
+ 
+         if (!file.query_exists ()) {
+             try {
+-                var dir = File.new_for_path (Environment.get_home_dir ()
+-                                             + NascSettings.sheet_path);
++                var dir = File.new_for_path (sheet_base);
+ 
+                 if (!dir.query_exists ()) {
+                     dir.make_directory ();
+@@ -410,4 +412,4 @@
+ 
+         return sb.str;
+     }
+-}
+\ No newline at end of file
++}
+diff -Naur nasc-0.5.1.orig/src/NascSettings.vala nasc-0.5.1/src/NascSettings.vala
+--- nasc-0.5.1.orig/src/NascSettings.vala	2018-11-05 19:38:55.000000000 +0100
++++ nasc-0.5.1/src/NascSettings.vala	2019-02-09 13:01:05.947368775 +0100
+@@ -24,7 +24,7 @@
+     public const string variable_names = "nasc_line_";
+     public const string sheet_split_char = "|§§|";
+     public const string name_split_char = "-§-";
+-    public const string sheet_path = "/.local/share/nasc/";
++    public const string sheet_dir = "nasc";
+ 
+     public bool show_tutorial { get; set; }
+     public bool advanced_mode { get; set; }
+@@ -47,4 +47,4 @@
+ 
+         return instance;
+     }
+-}
+\ No newline at end of file
++}

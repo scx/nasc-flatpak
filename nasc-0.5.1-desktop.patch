@@ -1,0 +1,20 @@
+diff -Naur nasc-0.5.1.orig/data/com.github.parnold-x.nasc.desktop nasc-0.5.1/data/com.github.parnold-x.nasc.desktop
+--- nasc-0.5.1.orig/data/com.github.parnold-x.nasc.desktop	2018-11-05 19:38:55.000000000 +0100
++++ nasc-0.5.1/data/com.github.parnold-x.nasc.desktop	2019-02-15 12:06:01.924510031 +0100
+@@ -2,12 +2,14 @@
+ Type=Application
+ Name=NaSC
+ Comment=Do maths like a normal person
+-GenericName=NaSC
++GenericName=Desktop calculator
+ TryExec=com.github.parnold-x.nasc
+ Exec=com.github.parnold-x.nasc
+ Icon=com.github.parnold-x.nasc
++StartupWMClass=nasc
++StartupNotify=true
+ Terminal=false
+-Categories=Utility;Calculator;Education;Science;
++Categories=Utility;Calculator;Education;Math;
+ Actions=AboutDialog;
+ 
+ [Desktop Action AboutDialog]

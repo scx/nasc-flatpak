@@ -1,0 +1,181 @@
+diff -Naur nasc-0.5.1.orig/CMakeLists.txt nasc-0.5.1/CMakeLists.txt
+--- nasc-0.5.1.orig/CMakeLists.txt	2019-02-14 18:43:40.547224384 +0100
++++ nasc-0.5.1/CMakeLists.txt	2019-02-14 18:59:57.767823636 +0100
+@@ -30,11 +30,11 @@
+ file(GLOB_RECURSE sources src/*.vala)
+ 
+ # Some configuration
+-configure_file (${CMAKE_SOURCE_DIR}/src/config.vala.cmake ${CMAKE_SOURCE_DIR}/src/config.vala)
++configure_file (${CMAKE_SOURCE_DIR}/src/config.vala.in ${CMAKE_SOURCE_DIR}/src/config.vala)
+ 
+ #GSettings
+ include(GSettings)
+-add_schema("com.github.parnold-x.nasc.gschema.xml")
++add_schema("data/com.github.parnold-x.nasc.gschema.xml")
+ 
+ set(NEEDED_PKG
+     glib-2.0
+diff -Naur nasc-0.5.1.orig/com.github.parnold-x.nasc.gschema.xml nasc-0.5.1/com.github.parnold-x.nasc.gschema.xml
+--- nasc-0.5.1.orig/com.github.parnold-x.nasc.gschema.xml	2018-11-05 19:38:55.000000000 +0100
++++ nasc-0.5.1/com.github.parnold-x.nasc.gschema.xml	1970-01-01 01:00:00.000000000 +0100
+@@ -1,64 +0,0 @@
+-<schemalist>
+-	<schema id="com.github.parnold-x.nasc" path="/com/github/parnold-x/nasc/" gettext-domain="nasc">
+-		
+-		<key name="show-tutorial" type="b">
+-			<default>true</default>
+-			<summary>Show a Tutorial at startup</summary>
+-			<description>
+-				If the user starts the first time a tutorial is shown
+-			</description>
+-		</key>
+-
+-		<key name="advanced-mode" type="b">
+-			<default>false</default>
+-			<summary>If true advanced functions are shown in the help</summary>
+-			<description>
+-				If you are a true math geek you need this set to true
+-			</description>
+-		</key>
+-
+-		<key name="window-width" type="i">
+-			<default>850</default>
+-			<summary>The user's last window width</summary>
+-			<description>
+-				The user's last window width
+-			</description>
+-		</key>
+-		
+-		<key name="window-height" type="i">
+-			<default>800</default>
+-			<summary>The user's last window height</summary>
+-			<description>
+-				The user's last window height
+-			</description>
+-		</key>
+-		
+-		<key name="pane-position" type="i">
+-			<default>445</default>
+-			<summary>The user's last pane position</summary>
+-			<description>
+-				The user's last pane position
+-			</description>
+-		</key>
+-
+-		<key name="opening-x" type="i">
+-		  <default>-1</default>
+-		  <summary>Most recent x position of nasc</summary>
+-		  <description>Most recent x position of nasc</description>
+-		</key>
+-
+-		<key name="opening-y" type="i">
+-		  <default>-1</default>
+-		  <summary>Most recent y position of nasc</summary>
+-		  <description>Most recent y position of nasc</description>
+-		</key>
+-	
+-		<key name="open-sheet" type="i">
+-			<default>0</default>
+-			<summary>The open sheet</summary>
+-			<description>
+-				The open sheet
+-			</description>
+-		</key>
+-	</schema>
+-</schemalist>
+\ No newline at end of file
+diff -Naur nasc-0.5.1.orig/data/com.github.parnold-x.nasc.gschema.xml nasc-0.5.1/data/com.github.parnold-x.nasc.gschema.xml
+--- nasc-0.5.1.orig/data/com.github.parnold-x.nasc.gschema.xml	1970-01-01 01:00:00.000000000 +0100
++++ nasc-0.5.1/data/com.github.parnold-x.nasc.gschema.xml	2018-11-05 19:38:55.000000000 +0100
+@@ -0,0 +1,64 @@
++<schemalist>
++	<schema id="com.github.parnold-x.nasc" path="/com/github/parnold-x/nasc/" gettext-domain="nasc">
++		
++		<key name="show-tutorial" type="b">
++			<default>true</default>
++			<summary>Show a Tutorial at startup</summary>
++			<description>
++				If the user starts the first time a tutorial is shown
++			</description>
++		</key>
++
++		<key name="advanced-mode" type="b">
++			<default>false</default>
++			<summary>If true advanced functions are shown in the help</summary>
++			<description>
++				If you are a true math geek you need this set to true
++			</description>
++		</key>
++
++		<key name="window-width" type="i">
++			<default>850</default>
++			<summary>The user's last window width</summary>
++			<description>
++				The user's last window width
++			</description>
++		</key>
++		
++		<key name="window-height" type="i">
++			<default>800</default>
++			<summary>The user's last window height</summary>
++			<description>
++				The user's last window height
++			</description>
++		</key>
++		
++		<key name="pane-position" type="i">
++			<default>445</default>
++			<summary>The user's last pane position</summary>
++			<description>
++				The user's last pane position
++			</description>
++		</key>
++
++		<key name="opening-x" type="i">
++		  <default>-1</default>
++		  <summary>Most recent x position of nasc</summary>
++		  <description>Most recent x position of nasc</description>
++		</key>
++
++		<key name="opening-y" type="i">
++		  <default>-1</default>
++		  <summary>Most recent y position of nasc</summary>
++		  <description>Most recent y position of nasc</description>
++		</key>
++	
++		<key name="open-sheet" type="i">
++			<default>0</default>
++			<summary>The open sheet</summary>
++			<description>
++				The open sheet
++			</description>
++		</key>
++	</schema>
++</schemalist>
+\ No newline at end of file
+diff -Naur nasc-0.5.1.orig/src/config.vala.cmake nasc-0.5.1/src/config.vala.cmake
+--- nasc-0.5.1.orig/src/config.vala.cmake	2018-11-05 19:38:55.000000000 +0100
++++ nasc-0.5.1/src/config.vala.cmake	1970-01-01 01:00:00.000000000 +0100
+@@ -1,9 +0,0 @@
+-namespace Constants {
+-    public const string DATADIR = "@DATADIR@";
+-    public const string STYLEDIR = "@STYLEDIR@";
+-    public const string PKGDATADIR = "@PKGDATADIR@";
+-    public const string GETTEXT_PACKAGE = "@GETTEXT_PACKAGE@";
+-    public const string RELEASE_NAME = "@RELEASE_NAME@";
+-    public const string VERSION = "@VERSION@";
+-    public const string VERSION_INFO = "@VERSION_INFO@";
+-}
+diff -Naur nasc-0.5.1.orig/src/config.vala.in nasc-0.5.1/src/config.vala.in
+--- nasc-0.5.1.orig/src/config.vala.in	1970-01-01 01:00:00.000000000 +0100
++++ nasc-0.5.1/src/config.vala.in	2018-11-05 19:38:55.000000000 +0100
+@@ -0,0 +1,9 @@
++namespace Constants {
++    public const string DATADIR = "@DATADIR@";
++    public const string STYLEDIR = "@STYLEDIR@";
++    public const string PKGDATADIR = "@PKGDATADIR@";
++    public const string GETTEXT_PACKAGE = "@GETTEXT_PACKAGE@";
++    public const string RELEASE_NAME = "@RELEASE_NAME@";
++    public const string VERSION = "@VERSION@";
++    public const string VERSION_INFO = "@VERSION_INFO@";
++}

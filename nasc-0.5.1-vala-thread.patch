@@ -1,0 +1,16 @@
+diff -Naur nasc-0.5.1.orig/CMakeLists.txt nasc-0.5.1/CMakeLists.txt
+--- nasc-0.5.1.orig/CMakeLists.txt	2018-11-05 19:38:55.000000000 +0100
++++ nasc-0.5.1/CMakeLists.txt	2019-02-09 18:28:56.251619976 +0100
+@@ -86,8 +86,10 @@
+ OPTIONS
+   #  --enable-experimental
+     --target-glib=2.32 # Remember to keep this updated.
+-    --thread
+-   # -X -rdynamic
++  #  The --thread option is now deprecated.
++  #  Should be ignored, but actually it leads to a build failure.
++  #  --thread
++  #  -X -rdynamic
+   #  -g
+ )
+ 

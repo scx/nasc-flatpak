@@ -1,0 +1,26 @@
+diff -ruN nasc-0.5.0.orig/CMakeLists.txt nasc-0.5.0/CMakeLists.txt
+--- nasc-0.5.0.orig/CMakeLists.txt	2018-10-28 17:08:46.000000000 +0300
++++ nasc-0.5.0/CMakeLists.txt	2018-10-29 23:00:16.441822612 +0300
+@@ -101,7 +101,8 @@
+ target_link_libraries(com.github.parnold-x.nasc
+   ${QALCULATE_LIB_PATH}
+   ${DEPS_LIBRARIES}
+-  qalculatenasc)
++  qalculatenasc
++  -lcln)
+ 
+ install (TARGETS com.github.parnold-x.nasc RUNTIME DESTINATION bin)
+ 
+diff -ruN nasc-0.5.0.orig/libqalculatenasc/CMakeLists.txt nasc-0.5.0/libqalculatenasc/CMakeLists.txt
+--- nasc-0.5.0.orig/libqalculatenasc/CMakeLists.txt	2018-10-28 17:08:46.000000000 +0300
++++ nasc-0.5.0/libqalculatenasc/CMakeLists.txt	2018-10-29 23:01:10.873982908 +0300
+@@ -1,7 +1,7 @@
+ pkg_check_modules(QALC REQUIRED libqalculate)
+ link_directories(${QALC_LIBRARY_DIRS})
+ include_directories(${QALC_INCLUDE_DIRS})
+- add_library(qalculatenasc SHARED
++ add_library(qalculatenasc STATIC
+   QalculateNasc.cc)
+-target_link_libraries(qalculatenasc ${QALC_LIBRARIES})
++target_link_libraries(qalculatenasc ${QALC_LIBRARIES} -lcln)
+ 
