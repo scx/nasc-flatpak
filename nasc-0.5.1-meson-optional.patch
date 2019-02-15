@@ -1,13 +1,96 @@
-diff -Naur nasc-0.5.1.orig/compile_meson.txt nasc-0.5.1/compile_meson.txt
---- nasc-0.5.1.orig/compile_meson.txt	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/compile_meson.txt	2019-02-14 19:56:15.102808930 +0100
+From 989bff9a4cff609d98e564e33e1016762633ffde Mon Sep 17 00:00:00 2001
+From: scx <scx.mail@gmail.com>
+Date: Fri, 15 Feb 2019 21:39:55 +0100
+Subject: [PATCH] Port to Meson
+
+Based on #98
+https://github.com/parnold-x/nasc/pull/98
+
+Fixes:
+1. Fix dependencies for libqalculatenasc
+https://github.com/parnold-x/nasc/pull/98#issuecomment-438664227
+
+2. Remove header files from meson.build
+https://github.com/parnold-x/nasc/pull/98#discussion_r234801513
+
+3. Get rid of get_option('prefix') from install_dir
+https://github.com/parnold-x/nasc/pull/98#discussion_r239734092
+
+4. Make Meson optional
+Do not remove CMake
+---
+ README.md                    |  16 ++++-
+ compile_meson.txt            |   3 +
+ data/meson.build             |  32 ++++++++++
+ debian_meson/changelog       |   8 +++
+ debian_meson/compat          |   1 +
+ debian_meson/control         |  22 +++++++
+ debian_meson/copyright       |  24 ++++++++
+ debian_meson/rules           |  13 ++++
+ debian_meson/source/format   |   1 +
+ icons/meson.build            |   9 +++
+ libqalculatenasc/meson.build |  10 ++++
+ meson.build                  | 113 +++++++++++++++++++++++++++++++++++
+ meson/post_install.py        |  22 +++++++
+ recompile_meson.sh           |   8 +++
+ 14 files changed, 279 insertions(+), 3 deletions(-)
+ create mode 100644 compile_meson.txt
+ create mode 100644 data/meson.build
+ create mode 100644 debian_meson/changelog
+ create mode 100644 debian_meson/compat
+ create mode 100644 debian_meson/control
+ create mode 100644 debian_meson/copyright
+ create mode 100644 debian_meson/rules
+ create mode 100644 debian_meson/source/format
+ create mode 100644 icons/meson.build
+ create mode 100644 libqalculatenasc/meson.build
+ create mode 100644 meson.build
+ create mode 100644 meson/post_install.py
+ create mode 100644 recompile_meson.sh
+
+diff --git a/README.md b/README.md
+index e9ab024..5289ab3 100644
+--- a/README.md
++++ b/README.md
+@@ -32,11 +32,21 @@ Dependencies:
+ * libqalculate
+ * gtksourceview-3.0 
+ * gthread-2.0
+- 
+-then build with:
+- 
++
++Supported build systems:
++* cmake 2.8
++* meson
++
++### Building with cmake
+ ```
+ mkdir build/ && cd build
+ cmake -DCMAKE_INSTALL_LIBDIR=/usr/lib -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+ make && sudo make install
+ ```
++
++### Building with meson
++```
++meson build --prefix=/usr
++cd build
++ninja && sudo ninja install
++```
+diff --git a/compile_meson.txt b/compile_meson.txt
+new file mode 100644
+index 0000000..35c6d5b
+--- /dev/null
++++ b/compile_meson.txt
 @@ -0,0 +1,3 @@
 +meson build --prefix=/usr
 +
 +ninja -C build
-diff -Naur nasc-0.5.1.orig/data/meson.build nasc-0.5.1/data/meson.build
---- nasc-0.5.1.orig/data/meson.build	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/data/meson.build	2019-02-14 20:17:31.031927698 +0100
+diff --git a/data/meson.build b/data/meson.build
+new file mode 100644
+index 0000000..0f7eb87
+--- /dev/null
++++ b/data/meson.build
 @@ -0,0 +1,32 @@
 +install_data(
 +    meson.project_name() + '.appdata.xml',
@@ -41,9 +124,11 @@ diff -Naur nasc-0.5.1.orig/data/meson.build nasc-0.5.1/data/meson.build
 +    install_dir: style_dir
 +)
 +
-diff -Naur nasc-0.5.1.orig/debian_meson/changelog nasc-0.5.1/debian_meson/changelog
---- nasc-0.5.1.orig/debian_meson/changelog	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/debian_meson/changelog	2018-11-05 19:38:55.000000000 +0100
+diff --git a/debian_meson/changelog b/debian_meson/changelog
+new file mode 100644
+index 0000000..2f62c82
+--- /dev/null
++++ b/debian_meson/changelog
 @@ -0,0 +1,8 @@
 +com.github.parnold-x.nasc (0.4) UNSTABLE; urgency=low
 +
@@ -53,14 +138,18 @@ diff -Naur nasc-0.5.1.orig/debian_meson/changelog nasc-0.5.1/debian_meson/change
 +  * Initial release.
 +
 + -- Peter Arnold <parnold1@gmail.com>  Wed, 03 May 2017 22:31:16 +0100
-diff -Naur nasc-0.5.1.orig/debian_meson/compat nasc-0.5.1/debian_meson/compat
---- nasc-0.5.1.orig/debian_meson/compat	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/debian_meson/compat	2019-02-14 19:56:15.100808907 +0100
+diff --git a/debian_meson/compat b/debian_meson/compat
+new file mode 100644
+index 0000000..f599e28
+--- /dev/null
++++ b/debian_meson/compat
 @@ -0,0 +1 @@
 +10
-diff -Naur nasc-0.5.1.orig/debian_meson/control nasc-0.5.1/debian_meson/control
---- nasc-0.5.1.orig/debian_meson/control	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/debian_meson/control	2019-02-14 19:56:15.100808907 +0100
+diff --git a/debian_meson/control b/debian_meson/control
+new file mode 100644
+index 0000000..1658b4f
+--- /dev/null
++++ b/debian_meson/control
 @@ -0,0 +1,22 @@
 +Source: com.github.parnold-x.nasc
 +Section: misc
@@ -84,9 +173,11 @@ diff -Naur nasc-0.5.1.orig/debian_meson/control nasc-0.5.1/debian_meson/control
 +Depends: ${misc:Depends}, ${shlibs:Depends}, libqalculate-dev
 +Pre-Depends: dpkg (>= 1.15.6)
 +Description: Do maths like a normal person.
-diff -Naur nasc-0.5.1.orig/debian_meson/copyright nasc-0.5.1/debian_meson/copyright
---- nasc-0.5.1.orig/debian_meson/copyright	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/debian_meson/copyright	2018-11-05 19:38:55.000000000 +0100
+diff --git a/debian_meson/copyright b/debian_meson/copyright
+new file mode 100644
+index 0000000..97afda9
+--- /dev/null
++++ b/debian_meson/copyright
 @@ -0,0 +1,24 @@
 +Format: http://dep.debian.net/deps/dep5
 +Upstream-Name: NaSC
@@ -112,9 +203,11 @@ diff -Naur nasc-0.5.1.orig/debian_meson/copyright nasc-0.5.1/debian_meson/copyri
 + .
 + On Debian systems, the complete text of the GNU General
 + Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
-diff -Naur nasc-0.5.1.orig/debian_meson/rules nasc-0.5.1/debian_meson/rules
---- nasc-0.5.1.orig/debian_meson/rules	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/debian_meson/rules	2019-02-14 19:56:15.102808930 +0100
+diff --git a/debian_meson/rules b/debian_meson/rules
+new file mode 100644
+index 0000000..f82cad8
+--- /dev/null
++++ b/debian_meson/rules
 @@ -0,0 +1,13 @@
 +#!/usr/bin/make -f
 +# -*- makefile -*-
@@ -129,14 +222,18 @@ diff -Naur nasc-0.5.1.orig/debian_meson/rules nasc-0.5.1/debian_meson/rules
 +
 +%:
 +	dh $@ --buildsystem=meson
-diff -Naur nasc-0.5.1.orig/debian_meson/source/format nasc-0.5.1/debian_meson/source/format
---- nasc-0.5.1.orig/debian_meson/source/format	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/debian_meson/source/format	2018-11-05 19:38:55.000000000 +0100
+diff --git a/debian_meson/source/format b/debian_meson/source/format
+new file mode 100644
+index 0000000..89ae9db
+--- /dev/null
++++ b/debian_meson/source/format
 @@ -0,0 +1 @@
 +3.0 (native)
-diff -Naur nasc-0.5.1.orig/icons/meson.build nasc-0.5.1/icons/meson.build
---- nasc-0.5.1.orig/icons/meson.build	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/icons/meson.build	2019-02-14 19:56:15.102808000 +0100
+diff --git a/icons/meson.build b/icons/meson.build
+new file mode 100644
+index 0000000..937c56e
+--- /dev/null
++++ b/icons/meson.build
 @@ -0,0 +1,9 @@
 +sizes = ['16', '24', '32', '48', '64', '128']
 +
@@ -147,9 +244,11 @@ diff -Naur nasc-0.5.1.orig/icons/meson.build nasc-0.5.1/icons/meson.build
 +    )
 +endforeach
 +
-diff -Naur nasc-0.5.1.orig/libqalculatenasc/meson.build nasc-0.5.1/libqalculatenasc/meson.build
---- nasc-0.5.1.orig/libqalculatenasc/meson.build	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/libqalculatenasc/meson.build	2019-02-14 20:51:48.513297333 +0100
+diff --git a/libqalculatenasc/meson.build b/libqalculatenasc/meson.build
+new file mode 100644
+index 0000000..f2aab9d
+--- /dev/null
++++ b/libqalculatenasc/meson.build
 @@ -0,0 +1,10 @@
 +libqalculatenasc = static_library(
 +    'libqalculatenasc',
@@ -161,35 +260,11 @@ diff -Naur nasc-0.5.1.orig/libqalculatenasc/meson.build nasc-0.5.1/libqalculaten
 +        dependency('libqalculate'),
 +    ],
 +)
-diff -Naur nasc-0.5.1.orig/meson/post_install.py nasc-0.5.1/meson/post_install.py
---- nasc-0.5.1.orig/meson/post_install.py	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/meson/post_install.py	2019-02-14 19:56:15.103808000 +0100
-@@ -0,0 +1,22 @@
-+import argparse
-+import os
-+import subprocess
-+
-+parser = argparse.ArgumentParser()
-+parser.add_argument("--schemadir", action="store", required=True)
-+parser.add_argument("--iconsdir", action="store", required=True)
-+
-+args = vars(parser.parse_args())
-+
-+schemadir = args["schemadir"]
-+iconsdir = args["iconsdir"]
-+
-+hicolordir = os.path.join(iconsdir, 'hicolor')
-+
-+if not os.environ.get('DESTDIR'):
-+    print('Compiling gsettings schemas ...')
-+    subprocess.run(['glib-compile-schemas', schemadir])
-+
-+    print('Compiling icon cache ...')
-+    subprocess.run(['gtk-update-icon-cache', hicolordir])
-+
-diff -Naur nasc-0.5.1.orig/meson.build nasc-0.5.1/meson.build
---- nasc-0.5.1.orig/meson.build	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/meson.build	2019-02-14 19:56:15.103808000 +0100
+diff --git a/meson.build b/meson.build
+new file mode 100644
+index 0000000..9f124d9
+--- /dev/null
++++ b/meson.build
 @@ -0,0 +1,113 @@
 +project(
 +    'com.github.parnold-x.nasc',
@@ -304,37 +379,39 @@ diff -Naur nasc-0.5.1.orig/meson.build nasc-0.5.1/meson.build
 +subdir('data')
 +subdir('icons')
 +
-diff -Naur nasc-0.5.1.orig/README.md nasc-0.5.1/README.md
---- nasc-0.5.1.orig/README.md	2018-11-05 19:38:55.000000000 +0100
-+++ nasc-0.5.1/README.md	2019-02-14 20:08:31.268528436 +0100
-@@ -32,11 +32,21 @@
- * libqalculate
- * gtksourceview-3.0 
- * gthread-2.0
-- 
--then build with:
-- 
+diff --git a/meson/post_install.py b/meson/post_install.py
+new file mode 100644
+index 0000000..1fa7d29
+--- /dev/null
++++ b/meson/post_install.py
+@@ -0,0 +1,22 @@
++import argparse
++import os
++import subprocess
 +
-+Supported build systems:
-+* cmake 2.8
-+* meson
++parser = argparse.ArgumentParser()
++parser.add_argument("--schemadir", action="store", required=True)
++parser.add_argument("--iconsdir", action="store", required=True)
 +
-+### Building with cmake
- ```
- mkdir build/ && cd build
- cmake -DCMAKE_INSTALL_LIBDIR=/usr/lib -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
- make && sudo make install
- ```
++args = vars(parser.parse_args())
 +
-+### Building with meson
-+```
-+meson build --prefix=/usr
-+cd build
-+ninja && sudo ninja install
-+```
-diff -Naur nasc-0.5.1.orig/recompile_meson.sh nasc-0.5.1/recompile_meson.sh
---- nasc-0.5.1.orig/recompile_meson.sh	1970-01-01 01:00:00.000000000 +0100
-+++ nasc-0.5.1/recompile_meson.sh	2019-02-14 19:56:15.102808930 +0100
++schemadir = args["schemadir"]
++iconsdir = args["iconsdir"]
++
++hicolordir = os.path.join(iconsdir, 'hicolor')
++
++if not os.environ.get('DESTDIR'):
++    print('Compiling gsettings schemas ...')
++    subprocess.run(['glib-compile-schemas', schemadir])
++
++    print('Compiling icon cache ...')
++    subprocess.run(['gtk-update-icon-cache', hicolordir])
++
+diff --git a/recompile_meson.sh b/recompile_meson.sh
+new file mode 100644
+index 0000000..26bd631
+--- /dev/null
++++ b/recompile_meson.sh
 @@ -0,0 +1,8 @@
 +#!/usr/bin/bash
 +

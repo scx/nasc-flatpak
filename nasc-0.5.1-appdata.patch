@@ -1,6 +1,27 @@
-diff -Naur nasc-0.5.1.orig/data/com.github.parnold-x.nasc.appdata.xml nasc-0.5.1/data/com.github.parnold-x.nasc.appdata.xml
---- nasc-0.5.1.orig/data/com.github.parnold-x.nasc.appdata.xml	2018-11-05 19:38:55.000000000 +0100
-+++ nasc-0.5.1/data/com.github.parnold-x.nasc.appdata.xml	2019-02-09 14:55:28.690107364 +0100
+From d00ac1002a6a16aca4a57ada0c304eba839a7523 Mon Sep 17 00:00:00 2001
+From: scx <scx.mail@gmail.com>
+Date: Fri, 15 Feb 2019 21:19:15 +0100
+Subject: [PATCH] Enhance AppData file
+
+1. Update release notes
+- Fix date for 0.5.0
+- Add info about 0.5.1
+
+2. Add screenshot captions
+
+3. Add kudos
+
+4. Add launchable tag
+
+5. Fix indents
+---
+ data/com.github.parnold-x.nasc.appdata.xml | 23 ++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/data/com.github.parnold-x.nasc.appdata.xml b/data/com.github.parnold-x.nasc.appdata.xml
+index a99ce96..cd087b8 100644
+--- a/data/com.github.parnold-x.nasc.appdata.xml
++++ b/data/com.github.parnold-x.nasc.appdata.xml
 @@ -12,21 +12,30 @@
    <provides>
      <binary>com.github.parnold-x.nasc</binary>
