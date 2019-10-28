@@ -44,11 +44,11 @@ See also:
 ### Prepare
 
 ```
-$ flatpak install "flathub" "org.gnome.Sdk//3.30"
+$ flatpak install "flathub" "org.gnome.Sdk//3.32"
 ```
 
 ```
-$ flatpak install "flathub" "org.gnome.Platform//3.30"
+$ flatpak install "flathub" "org.gnome.Platform//3.32"
 ```
 
 ```
@@ -73,11 +73,13 @@ $ flatpak-builder --run "build" "com.github.parnold_x.nasc.yaml" "sh"
 $ flatpak-builder --run "build" "com.github.parnold_x.nasc.yaml" "nasc"
 ```
 
-### Install
+### Create repo
 
 ```
 $ flatpak-builder --repo="repo" --force-clean "build" "com.github.parnold_x.nasc.yaml"
 ```
+
+### Install
 
 ```
 $ flatpak --user remote-add --no-gpg-verify "nasc" "repo"
@@ -103,7 +105,24 @@ $ flatpak --user uninstall "com.github.parnold_x.nasc"
 $ flatpak --user remote-delete "nasc"
 ```
 
-See also: [Building your first Flatpak](http://docs.flatpak.org/en/latest/first-build.html)
+### Build single-file bundle
+
+```
+$ flatpak build-bundle "repo" "nasc.flatpak" "com.github.parnold_x.nasc" --runtime-repo="https://flathub.org/repo/flathub.flatpakrepo"
+```
+
+### Install single-file bundle
+
+If you have already [installed](#install) the package, you have to [uninstall](#uninstall) it before continuing.
+
+```
+$ flatpak --user install "nasc.flatpak"
+```
+
+See also:
+
+* [Building your first Flatpak](http://docs.flatpak.org/en/latest/first-build.html)
+* [Single-file bundles](http://docs.flatpak.org/en/latest/single-file-bundles.html#single-file-bundles)
 
 ## FAQ
 
