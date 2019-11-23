@@ -44,15 +44,25 @@ See also:
 ### Prepare
 
 ```
-$ flatpak install "flathub" "org.gnome.Sdk//3.32"
+$ flatpak install "flathub" "org.gnome.Sdk//3.34"
 ```
 
 ```
-$ flatpak install "flathub" "org.gnome.Platform//3.32"
+$ flatpak install "flathub" "org.gnome.Platform//3.34"
 ```
 
 ```
-$ flatpak install "flathub" "io.elementary.BaseApp//juno"
+$ flatpak install "flathub" "io.elementary.BaseApp//juno-19.08"
+```
+
+Clone this repository, then checkout the right branch.
+
+```
+$ git submodule init
+```
+
+```
+$ git submodule update
 ```
 
 ### Build
